@@ -1,0 +1,28 @@
+{% extends "default.html" %}
+{% set page = 1 %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-5">Используйте ИИ для работы с фото</h1>
+    <p class="lead">Наш сайт собрал несколько наиболее интересных и распространенных алгоритмов обработки
+        фото<br><b>Зарегистрируйтесь</b> и попробуйте любой из них!</p>
+    <div class="d-flex align-content-between justify-content-around flex-wrap">
+        {% for item in catalog %}
+
+        <div class="card mb-3" style="width: 18rem;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-sm-center">
+                    <h5 class="card-title text-muted">{{item['title']}}</h5>
+                    <img class="container w-25 me-0" src="{{ url_for('static', filename=item['icon'])}}">
+                </div>
+                {% autoescape false %}
+                <p class="card-text text-muted">{{item['description']}}</p>
+                {% endautoescape %}
+                <a href="/catalog/{{loop.index + 1}}" class="card-link mb-0">Открыть</a>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+{% endblock %}

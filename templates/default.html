@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <title>Foton</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+</head>
+<body class="d-flex h-100 text-white bg-dark">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="p-3 bg-dark text-white">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none me-lg-auto">
+                    <h1>Foton.</h1>
+                </a>
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="/"
+                           class="nav-link px-2 {{'text-secondary' if page == 1 or not page else 'text-white'}}">Главная</a>
+                    </li>
+                    <li><a href="/about" class="nav-link px-2 {{'text-secondary' if page == 2 else 'text-white'}}">О
+                        нас</a></li>
+                </ul>
+                {% if current_user.is_authenticated %}
+                <div class="d-flex">
+                    <h5 class="navbar-brand">{{ current_user.email }}</h5>
+                    <a href="/logout" class="btn btn-danger">Выйти</a>
+                </div>
+                {% else %}
+                <div class="text-end">
+                    <a href="/login" class="btn btn-outline-light me-2">Войти</a>
+                    <a href="/register" class="btn btn-warning">Регистрация</a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="mt-auto text-white-50 text-center">
+        <p>Made by <a href="https://github.com/alex-bul" class="text-white">@alex-bul</a>.</p>
+    </footer>
+</div>
+</body>
+</html>
