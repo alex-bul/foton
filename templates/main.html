@@ -18,7 +18,7 @@
                 {% autoescape false %}
                 <p class="card-text text-muted">{{item['description']}}</p>
                 {% endautoescape %}
-                <a href="/catalog/{{loop.index + 1}}" class="card-link mb-0">Открыть</a>
+                <a href="/catalog/{{loop.index - 1}}" class="card-link mb-0">Открыть</a>
             </div>
         </div>
         {% endfor %}

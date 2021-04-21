@@ -14,7 +14,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
 
-    # process = orm.relation("Process", back_populates='customer_id')
+    processes = orm.relation("Process", back_populates='customer')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
