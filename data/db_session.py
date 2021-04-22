@@ -1,11 +1,21 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
-from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
+
+from sqlalchemy.orm import Session
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
 
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA journal_mode=WAL")
+    cursor.close()
 
 
 def global_init(db_file):

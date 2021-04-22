@@ -10,7 +10,7 @@ from data.register_form import RegisterForm
 from data.process import Process
 from data.user import User
 
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 
@@ -89,30 +89,28 @@ def register():
 @app.route('/catalog/<int:index>', methods=["POST", "GET"])
 @login_required
 def catalog_routes(index):
-    user_processes = list(filter(lambda x: x.catalog_id == index, current_user.processes))
+    user_processes = list(filter(lambda x: x.catalog_id == index, current_user.processes))[::-1]
     form_class = get_catalog_form(catalog[index]['form_value'])
     form = form_class()
     if form.validate_on_submit():
         photo_count = len(list(filter(lambda x: not x.startswith('_'), form_class.__dict__.keys()))) - 1
-        data = {}
+        data = []
         for i in range(photo_count):
             f = getattr(form, f'file{i}').data
             filename = secure_filename(f.filename)
             f.save(os.path.join(
                 app.instance_path, app.config['UPLOAD_FOLDER'], filename
             ))
-            data[f'photo{i}'] = f"{app.config['UPLOAD_FOLDER']}/{filename}"
+            data.append(f"{app.config['UPLOAD_FOLDER']}/{filename}")
+            # data[f'photo{i}'] = f"{app.config['UPLOAD_FOLDER']}/{filename}"
         db_sess = db_session.create_session()
         process = Process()
         process.customer_id = current_user.id
         process.catalog_id = index
-        process.request_data = json.dumps({
-            'url': catalog[index]['url'],
-            'data': data
-        })
+        process.request_data = json.dumps(data)
         db_sess.add(process)
         db_sess.commit()
-        redirect(f'/catalog/{index}')
+        return redirect(url_for('catalog_routes', index=index))
     return render_template('catalog_page.html', data=catalog[index], form=form, processes=user_processes)
 
 
@@ -124,5 +122,5 @@ def logout():
 
 
 if __name__ == '__main__':
-    db_session.global_init("db/data.db")
+    db_session.global_init(DB_FILE)
     app.run(host=HOST, port=PORT)
