@@ -1,29 +1,9 @@
 import requests
-import selenium
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
-from pathlib import Path
-import time
-import os
 import base64
 import json
 
 headless = False
-chromedriver_path = "chromedriver.exe"
 
-
-# chromedriver_path = "process_utils/chromedriver.exe"
-
-
-# def photo_to_anime(image_url):
-#     headers = {"accept": "image/png",
-#                "X-OVH-Api-Key": "506259df-e947-488f-b817-1f35793cd6e9",
-#                "Content-Type": "application/json"}
-#     data = f'{{"url":"{image_url}"}}'
-#     a = requests.post("https://api-market-place.ai.ovh.net/image-selfie2anime/process", headers=headers, data=data).content
-#     return a
-#     # with open(file_name, 'wb') as fd:
-#     #     fd.write(a)
 def detect_face(file_name):
     url_detect = "https://detect-face-fnk37ur3qq-an.a.run.app/api/v1/detect/"
 

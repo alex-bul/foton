@@ -6,7 +6,9 @@ from data import db_session
 from data.catalog_form import get_catalog_form
 from data.login_form import LoginForm
 from data.register_form import RegisterForm
+from data.add_catalog_page_form import CatalogPageForm
 
+from data.catalog_page import CatalogPage
 from data.process import Process
 from data.user import User
 
@@ -18,7 +20,7 @@ from config import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_PATH'] = UPLOAD_PATH
 app.instance_path = ''
 
 login_manager = LoginManager(app)
@@ -77,6 +79,8 @@ def register():
                                    form=form,
                                    message="Пользователь с таким Email уже зарегистрирован!")
         user = User()
+        if not db_sess.query(User).count():
+            user.is_admin = True
         user.email = form.email.data
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -99,19 +103,25 @@ def catalog_routes(index):
             f = getattr(form, f'file{i}').data
             filename = secure_filename(f.filename)
             f.save(os.path.join(
-                app.instance_path, app.config['UPLOAD_FOLDER'], filename
+                app.instance_path, app.config['UPLOAD_PATH'], filename
             ))
-            data.append(f"{app.config['UPLOAD_FOLDER']}/{filename}")
-            # data[f'photo{i}'] = f"{app.config['UPLOAD_FOLDER']}/{filename}"
+            data.append(f"{app.config['UPLOAD_PATH']}/{filename}")
         db_sess = db_session.create_session()
         process = Process()
-        process.customer_id = current_user.id
         process.catalog_id = index
         process.request_data = json.dumps(data)
-        db_sess.add(process)
+        current_user.processes.append(process)
+        db_sess.merge(current_user)
         db_sess.commit()
         return redirect(url_for('catalog_routes', index=index))
     return render_template('catalog_page.html', data=catalog[index], form=form, processes=user_processes)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    user_processes = current_user.processes[::-1]
+    return render_template('profile.html', processes=user_processes, type_needed=True, catalog=catalog)
 
 
 @app.route('/logout')
@@ -119,6 +129,35 @@ def catalog_routes(index):
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route('/catalog', methods=["POST", "GET"])
+@login_required
+def add_catalog_page():
+    form = CatalogPageForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+
+        catalog_page = CatalogPage()
+        catalog_page.title = form.title.data
+        catalog_page.description = form.description.data
+
+        f = form.icon.data
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(
+            app.instance_path, app.config['UPLOAD_PATH'], filename
+        ))
+        catalog_page.icon = f"{app.config['UPLOAD_PATH']}/{filename}"
+
+        catalog_page.fields_type = form.fields_type.data
+        catalog_page.request_data = form.request_data.data
+        catalog_page.url = form.url.data
+        current_user.pages.append(catalog_page)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/profile')
+
+    return render_template('add_catalog_page.html', form=form)
 
 
 if __name__ == '__main__':

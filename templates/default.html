@@ -26,7 +26,7 @@
                 {% if current_user.is_authenticated %}
                 <div class="d-flex">
                     <h5 class="navbar-brand">{{ current_user.email }}</h5>
-                    <a href="/logout" class="btn btn-danger">Выйти</a>
+                    <a href="/profile" class="btn btn-info">Профиль</a>
                 </div>
                 {% else %}
                 <div class="text-end">

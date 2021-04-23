@@ -5,7 +5,7 @@ import datetime
 
 from werkzeug.utils import secure_filename
 from process_utils.conventers import conventers
-from config import USER_PHOTOS_FOLDER, DB_FILE
+from config import RESULT_PHOTOS_FOLDER, DB_FILE
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
                 try:
                     func = conventers[catalog_id]
                     content = func(json.loads(request_data))
-                    filename = f"{USER_PHOTOS_FOLDER}/{secure_filename(f'{datetime.datetime.now()}.jpg')}"
+                    filename = f"{RESULT_PHOTOS_FOLDER}/{secure_filename(f'{datetime.datetime.now()}.jpg')}"
                     with open('static/' + filename, "wb") as f:
                         f.write(content)
                     c.execute(f"UPDATE processes SET is_finished = ?, result_code = ?, result = ? WHERE id = ?",
