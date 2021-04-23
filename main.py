@@ -16,7 +16,7 @@ from flask import Flask, render_template, redirect, request, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 
-from catalog_generate import get_catalog
+from generate_catalog import get_catalog
 from config import *
 
 app = Flask(__name__)
