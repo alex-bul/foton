@@ -16,6 +16,7 @@ from flask import Flask, render_template, redirect, request, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 
+from catalog_generate import get_catalog
 from config import *
 
 app = Flask(__name__)
@@ -39,7 +40,7 @@ def unauthorized_callback():
 
 @app.route('/')
 def default():
-    return render_template('main.html', catalog=catalog)
+    return render_template('main.html', catalog=get_catalog())
 
 
 @app.route('/about')
@@ -93,6 +94,7 @@ def register():
 @app.route('/catalog/<int:index>', methods=["POST", "GET"])
 @login_required
 def catalog_routes(index):
+    catalog = get_catalog()
     user_processes = list(filter(lambda x: x.catalog_id == index, current_user.processes))[::-1]
     form_class = get_catalog_form(catalog[index]['form_value'])
     form = form_class()
@@ -147,11 +149,12 @@ def add_catalog_page():
         f.save(os.path.join(
             app.instance_path, app.config['UPLOAD_PATH'], filename
         ))
-        catalog_page.icon = f"{app.config['UPLOAD_PATH']}/{filename}"
+        catalog_page.icon = f"{USER_PHOTOS_FOLDER}/{filename}"
 
         catalog_page.fields_type = form.fields_type.data
         catalog_page.request_data = form.request_data.data
         catalog_page.url = form.url.data
+        catalog_page.form_value = form.form_value.data
         current_user.pages.append(catalog_page)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -162,4 +165,6 @@ def add_catalog_page():
 
 if __name__ == '__main__':
     db_session.global_init(DB_FILE)
+    print(get_catalog())
+    print(get_catalog())
     app.run(host=HOST, port=PORT)

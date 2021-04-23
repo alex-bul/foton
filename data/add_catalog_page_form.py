@@ -23,7 +23,8 @@ class CatalogPageForm(FlaskForm):
         'В каком формате отправлять фото в запросе: binary или base64 (если несколько фото в запросе - через запятую, в том же порядке, как в теле запроса)',
         validators=[DataRequired()],
         render_kw={"placeholder": 'base64,binary,base64'})
-    submit = SubmitField('Войти')
+    form_value = StringField('Описание к загрузке фото в форме (массив)', validators=[DataRequired()], render_kw={"placeholder": '["Фото человека с лицом"]'})
+    submit = SubmitField('Создать')
 
     @staticmethod
     def validate_request_data(form, field):
