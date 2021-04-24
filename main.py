@@ -123,6 +123,7 @@ def catalog_routes(index):
 @login_required
 def profile():
     user_processes = current_user.processes[::-1]
+    catalog = get_catalog()
     return render_template('profile.html', processes=user_processes, type_needed=True, catalog=catalog)
 
 
@@ -151,20 +152,30 @@ def add_catalog_page():
         ))
         catalog_page.icon = f"{USER_PHOTOS_FOLDER}/{filename}"
 
-        catalog_page.fields_type = form.fields_type.data
+        catalog_page.request_photo_type = form.request_photo_type.data
         catalog_page.request_data = form.request_data.data
         catalog_page.url = form.url.data
         catalog_page.form_value = form.form_value.data
         current_user.pages.append(catalog_page)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect('/profile')
+        return redirect('/')
 
     return render_template('add_catalog_page.html', form=form)
 
 
+@app.route('/catalog/<int:index>', methods=["DELETE"])
+@login_required
+def catalog_delete(index):
+    catalog = get_catalog(True)
+    if current_user.id == catalog[index].get('owner_id', ''):
+        db_sess = db_session.create_session()
+        page = db_sess.query(CatalogPage).get(catalog[index]['id'])
+        page.is_delete = True
+        db_sess.commit()
+        catalog.pop(index)
+
+
 if __name__ == '__main__':
     db_session.global_init(DB_FILE)
-    print(get_catalog())
-    print(get_catalog())
     app.run(host=HOST, port=PORT)

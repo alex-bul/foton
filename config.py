@@ -3,6 +3,7 @@ PORT = 8080
 STATIC_FOLDER = 'static'
 USER_PHOTOS_FOLDER = 'user_photos'
 RESULT_PHOTOS_FOLDER = 'result_photos'
+DEVELOPMENT = True   # включение режима разработки позволяет видеть обработчики, созданные администраторами
 
 UPLOAD_PATH = f'{STATIC_FOLDER}/{USER_PHOTOS_FOLDER}'
 DB_FILE = "db/data.db"
@@ -22,4 +23,3 @@ catalog = [
     },
 ]
 # prepare catalog
-

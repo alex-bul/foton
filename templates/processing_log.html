@@ -22,7 +22,7 @@
                 {% if process.catalog_id < catalog|length %}
                     <td>{{catalog[process.catalog_id]["title"]}}</td>
                 {% else %}
-                    <td>No</td>
+                    <td>Обработчик не обнаружен</td>
                 {% endif %}
             {% endif %}
             {% if process.is_finished == 0 %}

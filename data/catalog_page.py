@@ -15,9 +15,10 @@ class CatalogPage(SqlAlchemyBase, UserMixin, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String)
     description = sqlalchemy.Column(sqlalchemy.String)
     icon = sqlalchemy.Column(sqlalchemy.String, default='')
-    fields_type = sqlalchemy.Column(sqlalchemy.String)
+    request_photo_type = sqlalchemy.Column(sqlalchemy.String)
     form_value = sqlalchemy.Column(sqlalchemy.String)
     request_data = sqlalchemy.Column(sqlalchemy.String)
+    result_key = sqlalchemy.Column(sqlalchemy.String)
     url = sqlalchemy.Column(sqlalchemy.String)
     is_delete = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
